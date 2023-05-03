@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+
+.chatroom {
+    font-family: "Montserrat", sans-serif;
+    background-color: #eeeeee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffff;
+        border-radius: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+        height: 800px;
+        width: 600px;
+        max-height: 90%;
+    }
+
+    .container p {
+        text-align: center;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin: 20px;
+        color: #a876aa;
+    }
+
+    .header .avatar {
+        background-color: #a876aa;
+        align-self: center;
+        padding: 5px;
+        width: 50px;
+        border-radius: 50%;
+    }
+
+    .header h3 {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .header i {
+        margin: 0 10px;
+    }
+
+    .chat {
+        background-color: #fff;
+        height: 100%;
+        overflow: auto;
+        padding: 10px;
+    }
+
+    .message {
+        font-size: 16px;
+        line-height: 25px;
+        width: fit-content;
+        max-width: 450px;
+        margin: 20px 10px;
+        padding: 20px;
+        border-radius: 30px;
+    }
+
+    .message .reply {
+        background-color: #a876aa;
+        color: #fff;
+        border-top-left-radius: 0px;
+        padding-left: 30px;
+    }
+
+    .message .response {
+        background-color: #eee;
+        border-top-right-radius: 0px;
+        margin-left: auto;
+        padding-right: 30px;
+    }
+
+    .send-message-div {
+        height: 12%;
+        width: 100%;
+        position: relative;
+    }
+
+    .message-input {
+        display: flex;
+        background-color: #eee;
+        font-family: inherit;
+        border: 0;
+        border-radius: 50px;
+        padding: 14px 40px;
+        margin: 20px;
+        font-size: 16px;
+        width: 95%;
+    }
+
+    .message-btn {
+        border: 0;
+        transition: scale 0.2s ease;
+        color: #a876aa;
+        cursor: pointer;
+        position: absolute;
+        top: 35%;
+        right: 4%;
+        font-size: xx-large;
+    }
+
+    .message-btn:active {
+        scale: 0.99;
+    }
+
+    /*=============== SCROLLBAR ===============*/
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #fff;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #eee;
+        border-radius: 5px;
+    }
+
+    /*=============== MEDIA QUERY ===============*/
+
+    @media screen and (max-width: 650px) {
+        .container {
+            max-height: 100%;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}
