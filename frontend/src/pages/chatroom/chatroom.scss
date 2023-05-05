@@ -65,7 +65,14 @@
         border-radius: 30px;
     }
 
-    .message .reply {
+    .reply {
+        font-size: 16px;
+        line-height: 25px;
+        width: fit-content;
+        max-width: 450px;
+        margin: 20px 10px;
+        padding: 20px;
+        border-radius: 30px;
         background-color: #a876aa;
         color: #fff;
         border-top-left-radius: 0px;

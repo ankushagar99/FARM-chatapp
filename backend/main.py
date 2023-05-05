@@ -58,6 +58,7 @@ class ConnectionManager:
             self.active_connections[room_id] = websocket
     
     async def receive_personal_message(self, room_id: str):
+        print(self.active_connections)
         await self.active_connections[room_id].receive_text()
     
     async def send_personal_message(self, message: str, websocket: WebSocket):
@@ -83,9 +84,14 @@ def create_user(payload: UsersCreate):
 
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: int):
-    await manager.connect(websocket)
+    await websocket.accept()
     try:
-        data = await manager.receive_personal_message(room_id)
-        await manager.send_personal_message(data, websocket)
+        print(f"Websocket connected: {websocket}")
+        while True:
+            data = await websocket.receive_text()
+            print(f"Received data: {data}")
+            await websocket.send_text(str(data))
+            print(f"Sent data: {data}")
     except WebSocketDisconnect:
-        manager.disconnect(room_id)
+        print(f"Websocket disconnected: {websocket}")
+        await websocket.close()

@@ -1,9 +1,43 @@
-import * as React from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import "./chatroom.scss";
 
 export interface IChatRoom {}
 
 export default function ChatRoom(props: IChatRoom) {
+  const [messageHistory, setMessageHistory] = useState<MessageEvent<string>[]>(
+    []
+  );
+  const [message, setMessage] = useState<string>("");
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(
+    "ws://localhost:8000/ws/1",
+    {
+      onOpen: () => console.log("WebSocket connection opened."),
+      onClose: () => console.log("WebSocket connection closed."),
+      onError: (event: WebSocketEventMap['error']) => console.error("WebSocket error:", event),
+      shouldReconnect: (closeEvent) => true,
+    }
+  );
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      console.log("Received message:", lastMessage);
+      setMessageHistory([...messageHistory, lastMessage]);
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  const handleClickSendMessage = () => sendMessage(message);
+
+  const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    if (event.key === "Enter") {
+      handleClickSendMessage();
+      console.log("Sent message:", message);
+    }
+  };
+
   return (
     <div className="chatroom">
       <div className="container">
@@ -20,10 +54,22 @@ export default function ChatRoom(props: IChatRoom) {
         </div>
         <div id="chat" className="chat">
           <p>Today</p>
+          {messageHistory.map((data, index) => (
+            <div key={index} className="reply">
+              {data.data}
+            </div>
+          ))}
         </div>
         <div className="send-message-div">
-          <input type="text" id="jokeBtn" placeholder="Type Your Message Here....." className="message-input" />
-          <button type="button" className="message-btn">
+          <input
+            type="text"
+            id="jokeBtn"
+            placeholder="Type Your Message Here....."
+            className="message-input"
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyPress}
+          />
+          <button type="button" className="message-btn" onClick={handleClickSendMessage}>
             <i className="fa-solid fa-paper-plane"></i>
           </button>
         </div>
