@@ -11,7 +11,7 @@ export default function ChatRoom(props: IChatRoom) {
   const [message, setMessage] = useState<string>("");
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    "ws://localhost:8000/ws/1",
+    "ws://192.168.29.176:8000/ws/1",
     {
       onOpen: () => console.log("WebSocket connection opened."),
       onClose: () => console.log("WebSocket connection closed."),
@@ -35,6 +35,7 @@ export default function ChatRoom(props: IChatRoom) {
     if (event.key === "Enter") {
       handleClickSendMessage();
       console.log("Sent message:", message);
+      setMessage('')
     }
   };
 
@@ -66,6 +67,7 @@ export default function ChatRoom(props: IChatRoom) {
             id="jokeBtn"
             placeholder="Type Your Message Here....."
             className="message-input"
+            value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyPress}
           />
