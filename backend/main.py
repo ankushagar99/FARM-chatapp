@@ -2,10 +2,11 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pymongo import MongoClient
 from typing import List
 from pydantic import BaseModel, Field
-from bson.objectid import ObjectId
 from dotenv import load_dotenv
 import os
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
+from configs.objectid_to_string import PyObjectId
 
 load_dotenv()
 
@@ -32,20 +33,6 @@ db = client.chatting_app
 user = client.chatting_app.chat_user
 
 #class for converting objectid into string
-class PyObjectId(ObjectId):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if not ObjectId.is_valid(v):
-            raise ValueError("Invalid objectid")
-        return ObjectId(v)
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
 
 
 # this below line is for id as a string
@@ -76,10 +63,6 @@ class ConnectionManager:
             self.active_connections[room_id].append(websocket)
             print(self.active_connections)
     
-    async def receive_personal_message(self, room_id: str):
-        print(self.active_connections)
-        await self.active_connections[room_id].receive_text()
-    
     async def send_personal_message(self, message: str, room_id: str):
         for websocket in self.active_connections[room_id]:
             await websocket.send_text(message)
@@ -88,12 +71,13 @@ class ConnectionManager:
         for connection in self.active_connections:
             await connection.send_text(message)
 
-    def disconnect(self, room_id: str):
-        del self.active_connections[room_id]
-
+    def disconnect(self, websocket: WebSocket, room_id: str):
+        if len(self.active_connections[room_id]) > 1:
+            self.active_connections[room_id].remove(websocket)
+        else:
+            del self.active_connections[room_id]
 
 manager = ConnectionManager()
-
 
 @app.post("/", response_model=UsersResponce)
 def create_user(payload: UsersCreate):
@@ -114,3 +98,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: int):
             print(f"Sent data: {message}")
     except WebSocketDisconnect:
         print(f"Websocket disconnected: {websocket}")
+        manager.disconnect(websocket, room_id)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="192.168.29.176", port=8000)
