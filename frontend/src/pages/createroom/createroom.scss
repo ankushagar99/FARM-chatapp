@@ -21,25 +21,25 @@
         text-align: center;
     }
 
-    .login-form {
+    .create-room-form {
         display: grid;
         grid-template-columns: 1fr;
         row-gap: 16px;
     }
 
-    .login-form label {
+    .create-room-form label {
         display: block;
         margin-bottom: 8px;
     }
 
-    .login-form input {
+    .create-room-form input {
         width: 100%;
         padding: 1.2rem;
         border-radius: 9px;
         border: none;
     }
 
-    .login-form input:focus {
+    .create-room-form input:focus {
         outline: none;
         box-shadow: 0 0 0 4px rgba(253, 242, 233, 0.5);
     }
@@ -74,5 +74,13 @@
     .btn--form:hover {
         background-color: #fdf2e9;
         color: #f48982;
+    }
+
+    .form-change-link{
+        cursor: pointer;
+
+        &:hover{
+            color: aqua;
+        }
     }
 }

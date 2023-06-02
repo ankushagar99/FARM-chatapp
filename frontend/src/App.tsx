@@ -2,14 +2,17 @@ import { useState } from "react";
 import "./App.css";
 import CreateRoom from "./pages/createroom/createroom";
 import ChatRoom from "./pages/chatroom/chatroom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
-    <div className="App">
-      <ChatRoom/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<CreateRoom />} />
+        <Route path="/chat" element={<ChatRoom />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
