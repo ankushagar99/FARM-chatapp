@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import "./createroom.scss";
-import { v4 as uuid } from "uuid";
 import { AuthContext } from "../../components/authprovider";
 import { useForm, SubmitHandler } from "react-hook-form";
+import axios from "axios";
 
 type JoinRoomFormData = {
   username: string;
@@ -30,18 +30,25 @@ export default function CreateRoom(props: ICreateRoomProps) {
 
   const [active, setActive] = useState<boolean>(true);
 
-  const onJoinRoom: SubmitHandler<FormData> = (data) => {
+  const onJoinRoom: SubmitHandler<FormData> = async (data) => {
+    setAuth({ username: data.username });
     console.log(data);
+    await axios.post(`${import.meta.env.VITE_BASE_API}/api/users`, data);
   };
 
-  const onCreateRoom: SubmitHandler<FormData> = (data) => {
+  const onCreateRoom: SubmitHandler<FormData> = async (data) => {
+    setAuth({ username: data.username });
     console.log(data);
+    await axios.post(`${import.meta.env.VITE_BASE_API}/api/users`, data)
+    .then(r => console.log(r));
   };
 
   return (
     <div className="create-room">
       <div className="container">
-        <h2 className="login-title">{active ? "Join Chatroom" : "Register Chatroom"}</h2>
+        <h2 className="login-title">
+          {active ? "Join Chatroom" : "Register Chatroom"}
+        </h2>
         <form
           onSubmit={handleSubmit(active ? onJoinRoom : onCreateRoom)}
           className="create-room-form"

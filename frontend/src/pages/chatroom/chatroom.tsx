@@ -16,7 +16,6 @@ interface Message_Data {
 
 export default function ChatRoom(props: IChatRoom) {
   const navigate = useNavigate();
-
   const { auth } = useContext(AuthContext);
 
   if (auth === null || auth === undefined) {
@@ -29,7 +28,7 @@ export default function ChatRoom(props: IChatRoom) {
   const [message, setMessage] = useState<string>("");
 
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    `${websocketapi}/ws/1`,
+    `${import.meta.env.VITE_BASE_API}/ws/1`,
     {
       shouldReconnect: (closeEvent) => true,
     }
@@ -82,7 +81,7 @@ export default function ChatRoom(props: IChatRoom) {
         <ScrollToBottom className="chat">
           <p>Today</p>
           {messageHistory.map((data) => (
-            <h5 key={uuid()} className={"reply"}>
+            <h5 key={uuid()} className={data.data.username === auth.username ? "message reply" : "message response"}>
               {data.data.message}
             </h5>
           ))}

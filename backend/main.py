@@ -6,12 +6,12 @@ from dotenv import load_dotenv
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv()
+load_dotenv(".env")
 
-app = FastAPI(docs_url=os.environ['docs_url'], redoc_url=None)
+app = FastAPI(docs_url=os.getenv("docs_url"), redoc_url=None)
 
-app.include_router(apirouter.app)
-app.include_router(websocketrouter.app)
+app.include_router(apirouter.app, prefix="/api")
+app.include_router(websocketrouter.app, prefix="/ws")
 
 
 origins = [

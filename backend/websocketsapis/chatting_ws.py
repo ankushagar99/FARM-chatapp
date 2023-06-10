@@ -1,8 +1,10 @@
 from .websocketrouter import app
 from fastapi import WebSocket, WebSocketDisconnect
 from configs.ws_manager import manager
+from configs.mongodb_connection import db
 
-@app.websocket("/ws/{room_id}")
+
+@app.websocket("/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: int):
     await manager.connect(websocket, room_id)
     try:
