@@ -2,7 +2,11 @@ import { useState, useContext, useEffect } from "react";
 import "./createroom.scss";
 import { AuthContext } from "../../components/authprovider";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { BaseAPI } from "../../components/baseapi";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../../components/spinner";
 
 type JoinRoomFormData = {
   username: string;
@@ -23,24 +27,59 @@ export default function CreateRoom(props: ICreateRoomProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm<FormData>();
+
+  const navigate = useNavigate();
 
   const { setAuth } = useContext(AuthContext);
 
   const [active, setActive] = useState<boolean>(true);
 
-  const onJoinRoom: SubmitHandler<FormData> = async (data) => {
+  const onJoinRoom: SubmitHandler<FormData> = async (
+    data,
+    event: React.BaseSyntheticEvent<object, any, any> | undefined
+  ) => {
+    event?.preventDefault();
     setAuth({ username: data.username });
-    console.log(data);
-    await axios.post(`${import.meta.env.VITE_BASE_API}/api/users`, data);
+    await axios
+      .post(`${BaseAPI}/join-room`, data)
+      .then((r) => {
+        if (r.status === 200) {
+          navigate(`chat/${r.data._id}`);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.data?.detail) {
+          toast.error(err.response.data.detail);
+        } else {
+          toast.error(err.response.message);
+        }
+      });
   };
 
-  const onCreateRoom: SubmitHandler<FormData> = async (data) => {
-    setAuth({ username: data.username });
-    console.log(data);
-    await axios.post(`${import.meta.env.VITE_BASE_API}/api/users`, data)
-    .then(r => console.log(r));
+  const onCreateRoom: SubmitHandler<FormData> = async (
+    data,
+    event: React.BaseSyntheticEvent<object, any, any> | undefined
+  ) => {
+    event?.preventDefault();
+    setAuth({'username': data.username});
+    await axios
+      .post(`${BaseAPI}/create-room`, data)
+      .then((r) => {
+        if (r.status === 200) {
+          toast.success("Room has been created successfully");
+          navigate(`chat/${r.data._id}`);
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.data?.detail) {
+          toast.error(err.response.data.detail);
+        } else {
+          toast.error(err.response.message);
+        }
+      });
   };
 
   return (
@@ -113,10 +152,20 @@ export default function CreateRoom(props: ICreateRoomProps) {
             </>
           )}
 
-          <button className="btn btn--form" type="submit">
-            {active ? "Join" : "Register"}
+          <button
+            className="btn btn--form"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <Spinner /> : active ? "Join" : "Register"}
           </button>
-          <a onClick={() => setActive(!active)} className="form-change-link">
+          <a
+            onClick={() => {
+              reset();
+              setActive(!active);
+            }}
+            className="form-change-link"
+          >
             {active
               ? "Click here to register a chatroom"
               : "click here to join a chatroom"}

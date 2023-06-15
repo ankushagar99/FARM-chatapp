@@ -24,26 +24,20 @@ class CreateRoomPayload(BaseModel):
 
 @app.post("/join-room", response_model=JoinRoomResponce)
 async def join_room(payload: JoinRoomPayload):
-    if await db.chat_users.count_documents({"username": payload.username}) > 0:
-        raise HTTPException(
-            status_code=409,
-            detail="This username already taken, please try a different one",
-        )
     if await db.chat_rooms.count_documents({"room_name": payload.join_room_id}) == 0:
         raise HTTPException(
             status_code=404,
             detail=(f"There is no chat room exits of this name {payload.join_room_id}"),
         )
-    return {"message": "A new user has been created"}
+    await db.chat_users.insert_one({"username": payload.username})
+    room = await db.chat_rooms.find_one({"room_name": payload.join_room_id})
+    print(room)
+    id = room["_id"]
+    return {"_id": id, "message": "A new user has been created"}
 
 
 @app.post("/create-room", response_model=ResponseSchema)
 async def create_room(payload: CreateRoomPayload):
-    if await db.chat_users.count_documents({"username": payload.username}) > 0:
-        raise HTTPException(
-            status_code=409,
-            detail="This username already taken, please try a different one",
-        )
     if await db.chat_rooms.count_documents({"room_name": payload.join_room_id}) > 0:
         raise HTTPException(
             status_code=404,
@@ -56,4 +50,4 @@ async def create_room(payload: CreateRoomPayload):
         {"name": payload.room_name, "room_name": payload.join_room_id}
     )
     id = chat_room.inserted_id
-    return {"id": id}
+    return {"_id": id, "message": "A new user has been created"}

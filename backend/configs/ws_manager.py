@@ -10,10 +10,8 @@ class ConnectionManager:
         await websocket.accept()
         if room_id not in self.active_connections:
             self.active_connections[room_id] = [websocket]
-            print(self.active_connections)
         else:
             self.active_connections[room_id].append(websocket)
-            print(self.active_connections)
 
     async def send_personal_message(self, message: str, room_id: str):
         for websocket in self.active_connections[room_id]:

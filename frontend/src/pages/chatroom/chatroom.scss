@@ -55,7 +55,7 @@
         padding: 10px;
     }
 
-    .message {
+    .reply {
         font-size: 16px;
         line-height: 25px;
         width: fit-content;
@@ -63,21 +63,26 @@
         margin: 20px 10px;
         padding: 20px;
         border-radius: 30px;
-
-        .reply {
-            background-color: #a876aa;
-            color: #fff;
-            border-top-left-radius: 0px;
-            padding-left: 30px;
-        }
-
-        .response {
-            background-color: #eee;
-            border-top-right-radius: 0px;
-            margin-left: auto;
-            padding-right: 30px;
-        }
+        background-color: #a876aa;
+        color: #fff;
+        border-top-left-radius: 0px;
+        padding-left: 30px;
     }
+
+    .response {
+        font-size: 16px;
+        line-height: 25px;
+        width: fit-content;
+        max-width: 450px;
+        margin: 20px 10px;
+        padding: 20px;
+        border-radius: 30px;
+        background-color: #eee;
+        border-top-right-radius: 0px;
+        margin-left: auto;
+        padding-right: 30px;
+    }
+
     .send-message-div {
         height: 12%;
         width: 100%;

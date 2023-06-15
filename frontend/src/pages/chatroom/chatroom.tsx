@@ -2,14 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import useWebSocket from "react-use-websocket";
 import "./chatroom.scss";
 import ScrollToBottom from "react-scroll-to-bottom";
-import { websocketapi } from "../../components/baseapi";
+import { WebsocketAPI } from "../../components/baseapi";
 import { AuthContext } from "../../components/authprovider";
 import { v4 as uuid } from "uuid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface IChatRoom {}
 
-interface Message_Data {
+interface ChatMessage {
+  _id: string;
   username: string;
   message: string;
 }
@@ -17,34 +18,36 @@ interface Message_Data {
 export default function ChatRoom(props: IChatRoom) {
   const navigate = useNavigate();
   const { auth } = useContext(AuthContext);
+  const { id } = useParams();
+
+  console.log(auth.username)
 
   if (auth === null || auth === undefined) {
-    navigate("/");
+    
   }
 
-  const [messageHistory, setMessageHistory] = useState<
-    MessageEvent<Message_Data>[]
-  >([]);
+  const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState<string>("");
 
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    `${import.meta.env.VITE_BASE_API}/ws/1`,
+  const  { sendMessage, lastMessage } = useWebSocket(
+    `${WebsocketAPI}/6489a6632cb4dd414878bbde`,
     {
       shouldReconnect: (closeEvent) => true,
     }
   );
 
   useEffect(() => {
-    if (lastJsonMessage !== null) {
-      const lastMessage = JSON.parse(JSON.stringify(lastJsonMessage));
+    if (lastMessage !== null) {
+      const lastmessage = JSON.parse(lastMessage.data);
       setMessageHistory((prevMessageHistory) => [
         ...prevMessageHistory,
-        lastMessage,
+        lastmessage,
       ]);
     }
-  }, [lastJsonMessage]);
+  }, [lastMessage]);
 
-  const message_data: Message_Data = {
+  const message_data: ChatMessage = {
+    _id: uuid(),
     username: auth.username,
     message: message,
   };
@@ -52,7 +55,7 @@ export default function ChatRoom(props: IChatRoom) {
   const json_message: any = JSON.stringify(message_data);
 
   const handleClickSendMessage = () => {
-    sendJsonMessage(json_message);
+    sendMessage(json_message);
     setMessage("");
   };
 
@@ -81,8 +84,8 @@ export default function ChatRoom(props: IChatRoom) {
         <ScrollToBottom className="chat">
           <p>Today</p>
           {messageHistory.map((data) => (
-            <h5 key={uuid()} className={data.data.username === auth.username ? "message reply" : "message response"}>
-              {data.data.message}
+            <h5 key={data?._id} className={data?.username === auth?.username ? "response" : "reply"}>
+              {data?.message}
             </h5>
           ))}
         </ScrollToBottom>
