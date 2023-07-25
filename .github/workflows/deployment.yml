@@ -24,6 +24,7 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         script: |
           sudo su
+          ${{ secrets.DOCKER_ACCESS }}
           docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp
 
       
