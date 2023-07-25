@@ -24,6 +24,5 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
         script: |
-          usermod -aG docker ubuntu
-          docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest
+          sudo docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest
       
