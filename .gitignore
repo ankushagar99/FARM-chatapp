@@ -12,6 +12,7 @@ frontend/dist
 frontend/dist-ssr
 frontend/*.local
 frontend/.env.development
+frontend/.env.production
 backend/venv
 backend/.env
 # Editor directories and files

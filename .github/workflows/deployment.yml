@@ -1,0 +1,29 @@
+name: Deployment CI/CD
+
+on:
+  push:
+    branches: [ "deployment" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: ./backend
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Adding Environment Variables file in backend
+      run: echo "${{ secrets.ENV_FILE }}" > .env
+    - name: executing remote ssh commands and running docker container
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          sudo su
+          docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp
+
+      

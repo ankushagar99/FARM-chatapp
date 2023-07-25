@@ -44,7 +44,9 @@ export default function CreateRoom(props: ICreateRoomProps) {
     event?.preventDefault();
     setAuth({ username: data.username });
     await axios
-      .post(`${BaseAPI}/join-room`, data)
+      .post(`${BaseAPI}/join-room`, data, {
+        timeout: 4000,
+      })
       .then((r) => {
         if (r.status === 200) {
           navigate(`chat/${r.data._id}`);
@@ -64,9 +66,11 @@ export default function CreateRoom(props: ICreateRoomProps) {
     event: React.BaseSyntheticEvent<object, any, any> | undefined
   ) => {
     event?.preventDefault();
-    setAuth({'username': data.username});
+    setAuth({ username: data.username });
     await axios
-      .post(`${BaseAPI}/create-room`, data)
+      .post(`${BaseAPI}/create-room`, data, {
+        timeout: 4000,
+      })
       .then((r) => {
         if (r.status === 200) {
           toast.success("Room has been created successfully");

@@ -31,7 +31,6 @@ async def join_room(payload: JoinRoomPayload):
         )
     await db.chat_users.insert_one({"username": payload.username})
     room = await db.chat_rooms.find_one({"room_name": payload.join_room_id})
-    print(room)
     id = room["_id"]
     return {"_id": id, "message": "A new user has been created"}
 

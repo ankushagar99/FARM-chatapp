@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  web:
+    image: "996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest"
+    ports:
+      - "80:80"
+  

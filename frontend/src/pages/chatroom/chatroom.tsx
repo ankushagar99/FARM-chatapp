@@ -6,6 +6,9 @@ import { WebsocketAPI } from "../../components/baseapi";
 import { AuthContext } from "../../components/authprovider";
 import { v4 as uuid } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
+import { BaseAPI } from "../../components/baseapi";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 interface IChatRoom {}
 
@@ -19,22 +22,31 @@ export default function ChatRoom(props: IChatRoom) {
   const navigate = useNavigate();
   const { auth } = useContext(AuthContext);
   const { id } = useParams();
-
-  console.log(auth.username)
-
-  if (auth === null || auth === undefined) {
-    
-  }
-
   const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState<string>("");
+  const [tittle, setTittle] = useState<string>("");
 
-  const  { sendMessage, lastMessage } = useWebSocket(
-    `${WebsocketAPI}/6489a6632cb4dd414878bbde`,
-    {
-      shouldReconnect: (closeEvent) => true,
+  useEffect(() => {
+    axios
+      .get(`${BaseAPI}/chat/${id}`)
+      .then((response) => {
+        setMessageHistory([...response.data.chat_messages]);
+        setTittle(response.data.name);
+      })
+      .catch((error) => {
+        toast.error("Error retrieving chat data:");
+      });
+  }, []);
+  useEffect(() => {
+    if (!auth.username) {
+      toast.error("Please add your username to join the conversation");
+      navigate("/");
     }
-  );
+  }, [auth, navigate]);
+
+  const { sendMessage, lastMessage } = useWebSocket(`${WebsocketAPI}/${id}`, {
+    shouldReconnect: (closeEvent) => true,
+  });
 
   useEffect(() => {
     if (lastMessage !== null) {
@@ -76,7 +88,7 @@ export default function ChatRoom(props: IChatRoom) {
             alt=""
             className="avatar"
           />
-          <h3>Dad</h3>
+          <h3>{tittle}</h3>
           <i className="fa-solid fa-phone"></i>
           <i className="fa-solid fa-video"></i>
           <i className="fa-solid fa-ellipsis-vertical"></i>
@@ -84,7 +96,12 @@ export default function ChatRoom(props: IChatRoom) {
         <ScrollToBottom className="chat">
           <p>Today</p>
           {messageHistory.map((data) => (
-            <h5 key={data?._id} className={data?.username === auth?.username ? "response" : "reply"}>
+            <h5
+              key={data?._id}
+              className={
+                data?.username === auth?.username ? "response" : "reply"
+              }
+            >
               {data?.message}
             </h5>
           ))}

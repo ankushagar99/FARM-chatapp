@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { lazy } from "react";
 import "./App.css";
-import CreateRoom from "./pages/createroom/createroom";
-import ChatRoom from "./pages/chatroom/chatroom";
+const CreateRoom = lazy(() => import("./pages/createroom/createroom"));
+const ChatRoom = lazy(() => import("./pages/chatroom/chatroom"));
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
