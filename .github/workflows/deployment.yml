@@ -14,17 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Adding Environment Variables file in backend
-      run: echo "${{ secrets.ENV_FILE }}" > .env
-    - name: executing remote ssh commands and running docker container
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_KEY }}
-        script: |
-          sudo su
-          ${{ secrets.DOCKER_ACCESS }}
-          docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp
-
+    - name: Adding Environment Variables and secrets in a file
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
+        echo "${{ secrets.EC2_KEY }}" > EC2_instance_key_pair.pem
+    - name: connecting to ec2 and deploy the application
+      run: |
+        ssh -i "EC2_instance_key_pair.pem" ubuntu@ec2-"${{ secrets.HOST }}".ap-south-1.compute.amazonaws.com
+        sudo su
+        docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest
       
