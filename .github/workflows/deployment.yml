@@ -18,9 +18,12 @@ jobs:
       run: |
         echo "${{ secrets.ENV_FILE }}" > .env
     - name: connecting to ec2 and deploy the application
-      run: |
-        echo "${{ secrets.EC2_KEY }}" > EC2_instance_key_pair.pem
-        ssh -i "EC2_instance_key_pair.pem" ubuntu@ec2-"${{ secrets.HOST }}".ap-south-1.compute.amazonaws.com
-        sudo su
-        docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          sudo su
+          docker run -d -p 80:80 996648427470.dkr.ecr.ap-south-1.amazonaws.com/farm_chatapp:latest
       
